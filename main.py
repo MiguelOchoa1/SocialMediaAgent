@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 import json
 
-from video_config import VIDEO_CONFIG, DAILY_SCHEDULE, UPLOAD_TIME, PLATFORM
+from video_config import VIDEO_CONFIG, DAILY_SCHEDULE, UPLOAD_TIMES, PLATFORMS
 from modules import VideoUploader
 
 # Setup logging
@@ -85,25 +85,32 @@ class SocialMediaAgent:
         next_index = (last_index + 1) % num_captions
         return next_index
     
-    def upload_daily_video(self):
+    def upload_scheduled_video(self, time_slot_index):
         """
-        Upload today's scheduled video with rotating caption
+        Upload the scheduled video for specific time slot with rotating caption
+        
+        Args:
+            time_slot_index: Index of the time slot (0=9am, 1=12pm, 2=6pm, 3=11pm)
         """
         try:
             # Get today's day of week (0=Monday, 6=Sunday)
             today = datetime.now().weekday()
             
-            # Get scheduled video for today
-            video_filename = DAILY_SCHEDULE.get(today)
+            # Get scheduled videos for today
+            video_list = DAILY_SCHEDULE.get(today)
             
-            if not video_filename:
-                logger.warning(f"No video scheduled for today ({datetime.now().strftime('%A')})")
+            if not video_list or time_slot_index >= len(video_list):
+                logger.warning(f"No video scheduled for today ({datetime.now().strftime('%A')}) at time slot {time_slot_index}")
                 return
             
+            video_filename = video_list[time_slot_index]
+            upload_time = UPLOAD_TIMES[time_slot_index]
+            
             logger.info(f"\n{'='*60}")
-            logger.info(f"Daily Upload: {video_filename}")
+            logger.info(f"Daily Upload #{time_slot_index + 1}: {video_filename}")
             logger.info(f"Day: {datetime.now().strftime('%A')}")
-            logger.info(f"Platform: {PLATFORM}")
+            logger.info(f"Time Slot: {upload_time}")
+            logger.info(f"Platforms: {', '.join(PLATFORMS)}")
             logger.info(f"{'='*60}\n")
             
             # Get video path
@@ -126,16 +133,24 @@ class SocialMediaAgent:
             logger.info(f"Using caption #{caption_index + 1} of {len(video_data['captions'])}")
             logger.info(f"Caption preview: {caption[:50]}...")
             
-            # Upload the video
-            logger.info(f"Uploading to {PLATFORM}...")
-            result = self.uploader.upload(
-                video_path=video_path,
-                caption=caption,
-                platform=PLATFORM
-            )
+            # Upload the video to all platforms
+            all_success = True
+            for platform in PLATFORMS:
+                logger.info(f"\nUploading to {platform}...")
+                result = self.uploader.upload(
+                    video_path=video_path,
+                    caption=caption,
+                    platform=platform
+                )
+                
+                if result and result.get('success', False):
+                    logger.info(f"✓ {platform} upload successful!")
+                else:
+                    logger.error(f"✗ {platform} upload failed: {result.get('error', 'Unknown error') if result else 'No result'}")
+                    all_success = False
             
             # Update upload history
-            if result and result.get('success', False):
+            if all_success:
                 logger.info("✓ Upload successful!")
                 
                 # Update caption rotation
@@ -152,7 +167,7 @@ class SocialMediaAgent:
             return result
             
         except Exception as e:
-            logger.error(f"Error in upload_daily_video: {e}", exc_info=True)
+            logger.error(f"Error in upload_scheduled_video: {e}", exc_info=True)
             return None
     
     def upload_specific_video(self, video_filename: str):
@@ -165,7 +180,7 @@ class SocialMediaAgent:
         try:
             logger.info(f"\n{'='*60}")
             logger.info(f"Manual Upload: {video_filename}")
-            logger.info(f"Platform: {PLATFORM}")
+            logger.info(f"Platforms: {', '.join(PLATFORMS)}")
             logger.info(f"{'='*60}\n")
             
             video_path = os.path.join("videos", video_filename)
@@ -186,23 +201,32 @@ class SocialMediaAgent:
             logger.info(f"Using caption #{caption_index + 1} of {len(video_data['captions'])}")
             logger.info(f"Caption: {caption}")
             
-            # Upload
-            result = self.uploader.upload(
-                video_path=video_path,
-                caption=caption,
-                platform=PLATFORM
-            )
+            # Upload to all platforms
+            all_success = True
+            for platform in PLATFORMS:
+                logger.info(f"\nUploading to {platform}...")
+                result = self.uploader.upload(
+                    video_path=video_path,
+                    caption=caption,
+                    platform=platform
+                )
+                
+                if result and result.get('success', False):
+                    logger.info(f"✓ {platform} upload successful!")
+                else:
+                    logger.error(f"✗ {platform} upload failed: {result.get('error', 'Unknown error') if result else 'No result'}")
+                    all_success = False
             
             # Update history
-            if result and result.get('success', False):
-                logger.info("✓ Upload successful!")
+            if all_success:
+                logger.info("\n✓ All platforms uploaded successfully!")
                 self.upload_history[video_filename]['last_caption_index'] = caption_index
                 self.upload_history[video_filename]['upload_count'] += 1
                 self.upload_history[video_filename]['last_upload'] = datetime.now().isoformat()
                 self._save_upload_history()
                 return True
             else:
-                logger.error(f"✗ Upload failed: {result.get('error', 'Unknown error')}")
+                logger.error("\n✗ Some uploads failed")
                 return False
                 
         except Exception as e:
@@ -211,25 +235,29 @@ class SocialMediaAgent:
     
     def run_scheduler(self):
         """
-        Run the daily scheduler
+        Run the daily scheduler - 4 uploads per day
         """
         logger.info("\n" + "="*60)
-        logger.info("DAILY UPLOAD SCHEDULER")
+        logger.info("DAILY UPLOAD SCHEDULER (4 UPLOADS/DAY)")
         logger.info("="*60)
-        logger.info(f"Upload Time: {UPLOAD_TIME}")
-        logger.info(f"Platform: {PLATFORM}")
+        logger.info(f"Upload Times: {', '.join(UPLOAD_TIMES)}")
+        logger.info(f"Platforms: {', '.join(PLATFORMS)}")
         logger.info("\nWeekly Schedule:")
         
         days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-        for day_num, video_filename in DAILY_SCHEDULE.items():
-            logger.info(f"  {days[day_num]}: {video_filename}")
+        for day_num, video_list in DAILY_SCHEDULE.items():
+            logger.info(f"  {days[day_num]}:")
+            for i, video in enumerate(video_list):
+                logger.info(f"    {UPLOAD_TIMES[i]}: {video}")
         
         logger.info("="*60 + "\n")
         
-        # Schedule daily upload
-        schedule.every().day.at(UPLOAD_TIME).do(self.upload_daily_video)
+        # Schedule all 4 daily uploads
+        for i, upload_time in enumerate(UPLOAD_TIMES):
+            schedule.every().day.at(upload_time).do(self.upload_scheduled_video, time_slot_index=i)
+            logger.info(f"Scheduled upload #{i+1} at {upload_time}")
         
-        logger.info(f"Scheduler started. Waiting for {UPLOAD_TIME}...")
+        logger.info(f"\nScheduler started. Waiting for uploads...")
         logger.info("Press Ctrl+C to stop\n")
         
         try:
@@ -263,10 +291,12 @@ def main():
     """Main entry point"""
     import argparse
     
-    parser = argparse.ArgumentParser(description='Social Media Agent - Daily Video Uploader')
+    parser = argparse.ArgumentParser(description='Social Media Agent - Daily Video Uploader (4x/day)')
     parser.add_argument('command', choices=['schedule', 'upload', 'status'], 
                        help='Command to run')
     parser.add_argument('--video', help='Specific video filename to upload (for upload command)')
+    parser.add_argument('--slot', type=int, choices=[0, 1, 2, 3], 
+                       help='Time slot (0=9am, 1=12pm, 2=6pm, 3=11pm) for upload command')
     
     args = parser.parse_args()
     
@@ -280,9 +310,19 @@ def main():
         # Upload a specific video now
         if args.video:
             agent.upload_specific_video(args.video)
+        elif args.slot is not None:
+            # Upload the video for specific time slot
+            agent.upload_scheduled_video(args.slot)
         else:
-            # Upload today's scheduled video
-            agent.upload_daily_video()
+            # Upload all 4 videos for today
+            today = datetime.now().weekday()
+            video_list = DAILY_SCHEDULE.get(today, [])
+            logger.info(f"Uploading all {len(video_list)} videos for today...")
+            for i in range(len(video_list)):
+                agent.upload_scheduled_video(i)
+                if i < len(video_list) - 1:
+                    logger.info("Waiting 5 seconds before next upload...")
+                    time.sleep(5)
     
     elif args.command == 'status':
         # Show status
