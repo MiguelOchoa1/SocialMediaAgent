@@ -1,0 +1,85 @@
+# Caption Style Training File
+# Add your own caption examples here to train the AI to write like you
+
+# Your Caption Writing Style
+# CUSTOMIZE this to match YOUR style
+style:
+  # Describe YOUR unique caption style in one sentence
+  description: "Conversational, authentic, with strategic emoji placement and always engaging the audience"
+  
+  # Structure preferences - how YOU organize captions
+  structure:
+    - "Strong hook or attention-grabber in first line"
+    - "Main story or message in 2-3 short paragraphs"
+    - "Engaging question or call-to-action at end"
+  
+  # Tone and voice - how YOU sound
+  voice: "casual"  # Options: casual, professional, funny, inspirational, authentic, sarcastic
+  
+  # Specific elements YOU use in your captions
+  elements:
+    use_emojis: False           # Do you use emojis?
+    use_line_breaks: False       # Do you space out paragraphs?
+    use_questions: False         # Do you ask questions?
+    use_storytelling: False      # Do you tell stories?
+    use_humor: true            # Do you add humor?
+    use_personal_pronouns: true # Do you use "I", "we", "you"?
+    use_ellipsis: true         # Do you use "..." for dramatic pause?
+    use_caps_for_emphasis: false # Do you USE CAPS for emphasis?
+    
+  # Length preferences - how long YOUR captions typically are
+  length:
+    min_characters: 100
+    max_characters: 400
+    preferred_lines: 4-6  # Number of lines/paragraphs you usually write
+
+# Example Captions You've Written
+# REPLACE these samples with YOUR actual captions (5-10 real ones you've written)
+# The AI will learn from YOUR unique style
+examples:
+  - |
+   Bro is not in carnegie hall 🥀
+
+
+
+
+
+#everythinginitsrightplace #organ #fiu #piano #radiohead
+    
+  - |
+    Im always going to love you” head ahh 💀
+
+
+
+
+
+
+#miaandsebastianstheme #pianocover #lalaland #fiu #funny
+    
+  - |
+    bro has no audience 🥀
+
+
+
+
+
+
+#vienna #billyjoel #pianocover #fiu #brainrot
+  
+  
+
+  - |
+
+  
+
+
+  
+  - |
+  - |
+  - |
+  
+  
+  
+  
+  
+  - |

@@ -1,0 +1,37 @@
+# Environment and config
+.env
+config.yaml
+client_secrets.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Videos and media
+videos/*.mp4
+videos/*.mov
+videos/*.avi
+uploaded/
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

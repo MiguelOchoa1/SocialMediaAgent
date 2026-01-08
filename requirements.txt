@@ -1,0 +1,24 @@
+# Core dependencies
+schedule==1.2.0
+python-dotenv==1.0.0
+PyYAML==6.0.1
+requests==2.31.0
+
+# Video processing
+moviepy==1.0.3
+Pillow==10.1.0
+
+# Social media APIs
+instagrapi==2.0.0
+google-api-python-client==2.108.0
+google-auth-httplib2==0.2.0
+google-auth-oauthlib==1.2.0
+
+# AI/ML for captions (choose one)
+openai==1.6.1
+# OR use ollama locally (pip install ollama)
+ollama==0.1.6
+
+# Logging and utilities
+colorlog==6.8.0
+tqdm==4.66.1

@@ -1,0 +1,28 @@
+# Video Upload Schedule Configuration
+
+# Schedule format: "HH:MM" (24-hour format)
+# Days: monday, tuesday, wednesday, thursday, friday, saturday, sunday
+
+schedule:
+  # Example: Upload Monday, Wednesday, Friday at 10:00 AM
+  - days: ["monday", "wednesday", "friday"]
+    time: "10:00"
+    platform: "instagram"
+    
+  # Example: Upload every day at 6:00 PM
+  - days: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+    time: "18:00"
+    platform: "instagram"
+
+# Video Queue Settings
+queue:
+  auto_pick_next: true     # Automatically pick next video from folder
+  random_selection: false  # Randomly select video vs sequential
+  mark_uploaded: true      # Move uploaded videos to 'uploaded/' folder
+  
+# Caption Generation Settings
+caption:
+  max_length: 2200         # Instagram max is 2200 characters
+  include_emojis: true
+  tone: "casual"           # casual, professional, funny, inspirational
+  call_to_action: true     # Add CTA at the end

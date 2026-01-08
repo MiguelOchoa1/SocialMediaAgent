@@ -1,0 +1,20 @@
+# Video Descriptions
+# Add a description for each video so the AI generates relevant captions and hashtags
+# Format: "filename.mp4": "Description of what the video is about"
+
+# EXAMPLE FORMAT:
+# "my_workout_video.mp4": "Intense 10-minute home workout routine focusing on abs and core strength"
+# "cooking_pasta.mp4": "Quick and easy pasta recipe that takes only 15 minutes to make"
+# "travel_vlog.mp4": "Exploring the streets of Tokyo, visiting hidden local spots and trying street food"
+
+# ADD YOUR VIDEOS BELOW:
+videos:
+  # "your_video1.mp4": "What is this video about? Be specific - include topic, mood, key points"
+  # "your_video2.mp4": "Another video description here..."
+  
+  # Examples to help you understand the format:
+  "example_fitness.mp4": "Morning workout routine, high energy, motivational fitness content showing proper form for squats"
+  "example_cooking.mp4": "Making chocolate chip cookies from scratch, cozy baking vibes, family-friendly recipe"
+  "example_tech.mp4": "iPhone 15 Pro review focusing on camera quality and battery life, honest opinion"
+  
+# If a video is not listed here, the AI will generate captions based on the filename only
