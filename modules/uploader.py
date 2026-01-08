@@ -116,15 +116,16 @@ class VideoUploader:
             # Combine caption and hashtags
             full_caption = f"{caption}\n\n" + ' '.join([f'#{tag}' for tag in hashtags])
             
-            # Upload video as Instagram Trial Reel
-            # Trial reels are shown to non-followers first to test performance
-            logger.info(f"Uploading to Instagram as Trial Reel: {os.path.basename(video_path)}")
+            # Upload video as Instagram Reel
+            # Note: Instagram's "trial reels" feature may be deprecated or requires specific account settings
+            # Using feed_show="0" keeps reel out of main feed (reels tab only)
+            logger.info(f"Uploading to Instagram as Reel: {os.path.basename(video_path)}")
             media = self.instagram_client.clip_upload(
                 video_path,
                 caption=full_caption,
+                feed_show="0",  # "0" = reels tab only (no feed preview)
                 extra_data={
-                    "clips_share_preview_to_feed": True,  # Show in feed and reels
-                    "is_trials_reel": True  # Enable trial reel mode
+                    "audience": "besties"  # Try to limit to close friends/trial mode
                 }
             )
             

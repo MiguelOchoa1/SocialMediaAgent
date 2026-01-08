@@ -93,4 +93,4 @@ DAILY_SCHEDULE = {
 UPLOAD_TIMES = ["09:00", "12:00", "18:00", "23:00"]  # 9am, 12pm, 6pm, 11pm
 
 # Platform settings - upload to multiple platforms
-PLATFORMS = ["instagram", "youtube"]  # Uploads to both Instagram and YouTube
+PLATFORMS = ["instagram"]  # Instagram only for now (YouTube coming soon)

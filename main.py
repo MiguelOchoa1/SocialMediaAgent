@@ -1,5 +1,5 @@
 """
-Social Media Agent - Main Application
+Social Media Automated - Main Application
 Automated daily video upload with rotating hard-coded captions
 """
 
@@ -40,7 +40,7 @@ class SocialMediaAgent:
     def __init__(self):
         """Initialize the social media agent"""
         logger.info("=" * 60)
-        logger.info("Social Media Agent Starting (Hard-coded Mode)...")
+        logger.info("Social Media Automated Starting...")
         logger.info("=" * 60)
         
         try:
@@ -138,9 +138,10 @@ class SocialMediaAgent:
             for platform in PLATFORMS:
                 logger.info(f"\nUploading to {platform}...")
                 result = self.uploader.upload(
+                    platform=platform,
                     video_path=video_path,
                     caption=caption,
-                    platform=platform
+                    hashtags=[]  # Hashtags are already in caption
                 )
                 
                 if result and result.get('success', False):
@@ -206,9 +207,10 @@ class SocialMediaAgent:
             for platform in PLATFORMS:
                 logger.info(f"\nUploading to {platform}...")
                 result = self.uploader.upload(
+                    platform=platform,
                     video_path=video_path,
                     caption=caption,
-                    platform=platform
+                    hashtags=[]  # Hashtags are already in caption
                 )
                 
                 if result and result.get('success', False):
@@ -291,7 +293,7 @@ def main():
     """Main entry point"""
     import argparse
     
-    parser = argparse.ArgumentParser(description='Social Media Agent - Daily Video Uploader (4x/day)')
+    parser = argparse.ArgumentParser(description='Social Media Automated - Daily Video Uploader (4x/day)')
     parser.add_argument('command', choices=['schedule', 'upload', 'status'], 
                        help='Command to run')
     parser.add_argument('--video', help='Specific video filename to upload (for upload command)')
